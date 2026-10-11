@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 import secrets
+import sys
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -8,6 +9,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY') or secrets.token_urlsafe(50)
 
 DEBUG = True
+TESTING = 'test' in sys.argv or 'PYTEST_VERSION' in os.environ
+INTERNAL_IPS = ['127.0.0.1', '::1']
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
 
@@ -36,6 +39,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'anfisa_for_friends.urls'
+
+if DEBUG and not TESTING:
+    INSTALLED_APPS.append('debug_toolbar')
+    MIDDLEWARE.insert(1, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 
 TEMPLATES_DIR = BASE_DIR / 'templates'
 
